@@ -39,6 +39,9 @@ export function annotationsForPath(resultFile: string): Annotation[] {
     XML_PARSE_OPTIONS
   )
 
+  core.info(`Parsed ${resultFile}:`)
+  core.info(`resultFile: ${result}`)
+
   return chain((file: { name: string; duplication: Duplication }) => {
     return map(duplication => {
       const annotation: Annotation = {
