@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {File, PMDReport} from './pmd'
+import {File, CPDReport, Duplication} from './cpd'
 import parser from 'fast-xml-parser'
 import fs from 'fs'
 import BufferEncoding from 'buffer'
@@ -34,23 +34,23 @@ export function annotationsForPath(resultFile: string): Annotation[] {
   core.info(`Creating annotations for ${resultFile}`)
   const root: string = process.env['GITHUB_WORKSPACE'] || ''
 
-  const result: PMDReport = parser.parse(
+  const result: CPDReport = parser.parse(
     fs.readFileSync(resultFile, 'UTF-8' as BufferEncoding),
     XML_PARSE_OPTIONS
   )
 
-  return chain(file => {
-    return map(violation => {
+  return chain((file: { name: string; duplication: Duplication }) => {
+    return map(duplication => {
       const annotation: Annotation = {
-        annotation_level: getWarningLevel(violation.priority),
+        annotation_level: AnnotationLevel.warning,
         path: path.relative(root, file.name),
-        start_line: Number(violation.beginline || 1),
-        end_line: Number(violation.endline || violation.beginline || 1),
-        title: `${violation.ruleset} ${violation.rule}`,
-        message: decode(violation['#text'])
+        start_line: Number(duplication.lines),
+        end_line: Number(duplication.lines),
+        title: `Duplicate code detected`,
+        message: decode(duplication.codefragment)
       }
 
       return annotation
-    }, asArray(file.violation))
-  }, asArray<File>(result.pmd?.file))
+    }, asArray(file.duplication))
+  }, asArray<File>(result.cpd?.file))
 }
