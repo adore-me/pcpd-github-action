@@ -1,11 +1,11 @@
 import * as core from '@actions/core'
-import {File, CPDReport, Duplication} from './cpd'
+import {CPDReport, Duplication} from './cpd'
 import parser from 'fast-xml-parser'
 import fs from 'fs'
 import BufferEncoding from 'buffer'
 import * as path from 'path'
 import {Annotation, AnnotationLevel} from './github'
-import {chain, map} from 'ramda'
+import {map} from 'ramda'
 import decode from 'unescape'
 
 const XML_PARSE_OPTIONS = {
@@ -18,18 +18,6 @@ function asArray<T>(arg: T[] | T | undefined): T[] {
   return !arg ? [] : Array.isArray(arg) ? arg : [arg]
 }
 
-function getWarningLevel(arg: string | number): AnnotationLevel {
-  switch (arg) {
-    case '1':
-      return AnnotationLevel.failure
-    case '2':
-    case '3':
-      return AnnotationLevel.warning
-    default:
-      return AnnotationLevel.notice
-  }
-}
-
 export function annotationsForPath(resultFile: string): Annotation[] {
   core.info(`Creating annotations for ${resultFile}`)
   const root: string = process.env['GITHUB_WORKSPACE'] || ''
@@ -39,21 +27,32 @@ export function annotationsForPath(resultFile: string): Annotation[] {
     XML_PARSE_OPTIONS
   )
 
-  core.info(`Parsed ${resultFile}:`)
-  core.info(`resultFile: ${result}`)
+  return map(duplication => {
+    let filesWithLines = ''
+    // eslint-disable-next-line github/array-foreach
+    duplication.file.forEach(file => {
+      filesWithLines += `- in file: \`${file.path}\` at line \`${file.line}\`\n`
+    })
 
-  return chain((file: { name: string; duplication: Duplication }) => {
-    return map(duplication => {
-      const annotation: Annotation = {
-        annotation_level: AnnotationLevel.warning,
-        path: path.relative(root, file.name),
-        start_line: Number(duplication.lines),
-        end_line: Number(duplication.lines),
-        title: `Duplicate code detected`,
-        message: decode(duplication.codefragment)
-      }
+    const message = `
+Lines duplicated: ${duplication.lines} in ${duplication.file.length} places\n
+Duplications:
+${filesWithLines}
+Code:
+\`\`\`typescript
+${duplication.codefragment}
+\`\`\`
+`
 
-      return annotation
-    }, asArray(file.duplication))
-  }, asArray<File>(result.cpd?.file))
+    const annotation: Annotation = {
+      annotation_level: AnnotationLevel.warning,
+      path: path.relative(root, duplication.file[0].path),
+      start_line: Number(duplication.file[0].line),
+      end_line: Number(duplication.file[0].line) + Number(duplication.lines),
+      title: `Duplicate code detected`,
+      message: decode(message)
+    }
+
+    return annotation
+  }, asArray<Duplication>(result['pmd-cpd']?.duplication))
 }

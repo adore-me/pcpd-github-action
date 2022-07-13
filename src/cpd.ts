@@ -1,24 +1,19 @@
 export interface CPDReport {
-  cpd?: CPD
+  'pmd-cpd'?: CPD
 }
 
 export interface CPD {
-  file: File[] | File | undefined
-}
-
-export interface File {
-  name: string
-  duplication: Duplication[] | Duplication | undefined
-}
-
-export interface FilePaths {
-  path: string
-  line: string
+  duplication: Duplication[]
 }
 
 export interface Duplication {
   lines: string
   tokens: string
-  files: FilePaths[]
+  file: File[]
   codefragment: string
+}
+
+export interface File {
+  path: string
+  line: string
 }
