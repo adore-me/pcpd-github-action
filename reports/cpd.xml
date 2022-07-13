@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+    <duplication lines="14" tokens="75">
+        <file path="/__w/ms-tap/ms-tap/app/Http/Controllers/IndexController.php" line="32"/>
+        <file path="/__w/ms-tap/ms-tap/app/Http/Controllers/IndexController.php" line="52"/>
+        <codefragment>    public function getMetrics(): \Illuminate\Http\Response
+            {
+            $registry = new CollectorRegistry(new InMemory());
+            $gauge    = $registry-&gt;getOrRegisterGauge('queue', 'oldest_job', 'Oldest job history', ['app']);
+            $gauge-&gt;set(random_int(100, 1500), ['app' =&gt; 'ms-tap']);
+            $gauge = $registry-&gt;getOrRegisterGauge('queue', 'jobs_count', 'Oldest job history', ['app', 'queue_name']);
+            $queus = ['important_queue', 'test_queue'];
+            foreach ($queus as $queue) {
+            $gauge-&gt;set(random_int(100, 1500), ['app' =&gt; 'ms-tap', 'queue_name' =&gt; $queue]);
+            }
+            $renderer = new RenderTextFormat();
+            $result   = $renderer-&gt;render($registry-&gt;getMetricFamilySamples());
+
+            return new \Illuminate\Http\Response($result, 200, ['Content-type' =&gt; RenderTextFormat::MIME_TYPE]);
+        </codefragment>
+    </duplication>
+</pmd-cpd>

@@ -9,7 +9,7 @@ beforeAll(() => {
 })
 
 test('parses file', async () => {
-  const spotBugsXml = path.resolve(__dirname, '..', 'reports', 'pmd.xml')
+  const spotBugsXml = path.resolve(__dirname, '..', 'reports', 'cpd.xml')
   const annotations = annotationsForPath(spotBugsXml)
-  expect(annotations).toHaveLength(171)
+  expect(annotations).toHaveLength(1)
 })
