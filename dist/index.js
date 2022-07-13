@@ -71,7 +71,8 @@ ${duplication.codefragment}
             start_line: Number(duplication.file[0].line),
             end_line: Number(duplication.file[0].line) + Number(duplication.lines),
             title: `Duplicate code detected`,
-            message: (0, unescape_1.default)(message)
+            message: (0, unescape_1.default)(message),
+            raw_details: message
         };
         return annotation;
     }, asArray((_a = result['pmd-cpd']) === null || _a === void 0 ? void 0 : _a.duplication));
