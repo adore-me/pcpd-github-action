@@ -2,7 +2,7 @@
 
 # CPD GitHub Action
 
-This action pushes results from [PMD](https://pmd.github.io/) as check run annotations. :rocket:
+This action pushes results from [PCPD](https://github.com/sebastianbergmann/phpcpd) as check run annotations. :rocket:
 
 The action can also be used for any other static analysis tools that produce reports in the PMD XML format.
 The report itself must be generated in a former build step, for example a Maven build.
