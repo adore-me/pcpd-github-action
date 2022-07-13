@@ -1,6 +1,6 @@
 ![build-test](https://github.com/mihaisee/pcpd-github-action/workflows/build-test/badge.svg)
 
-# CPD GitHub Action
+# PCPD GitHub Action
 
 This action pushes results from [PCPD](https://github.com/sebastianbergmann/phpcpd) as check run annotations. :rocket:
 
@@ -12,13 +12,13 @@ The report itself must be generated in a former build step.
 
 ### `path`
 Required. A file, directory or wildcard pattern that describes where to find the reports.
-Multiple files can be processed through a [glob expression](https://github.com/actions/toolkit/tree/master/packages/glob), for example: `'**/pmd.xml'`.
+Multiple files can be processed through a [glob expression](https://github.com/actions/toolkit/tree/master/packages/glob), for example: `'**/cpd.xml'`.
 
 ### `name`
-Optional. Name for the check run to create. Defaults to `PMD`.
+Optional. Name for the check run to create. Defaults to `CPD`.
 
 ### `title`
-Optional. Title for the check run to create. Defaults to `PMD Source Code Analyzer report`.
+Optional. Title for the check run to create. Defaults to `CPD Source Code Analyzer report`.
 
 ### `token`
 Optional. GitHub API access token. Defaults to `${{ github.token }}`, which is set by `actions/checkout@v2` minimally.
@@ -26,7 +26,7 @@ Optional. GitHub API access token. Defaults to `${{ github.token }}`, which is s
 ## Example usage
 
 ```yaml
-name: Java CI
+name: CI
 
 on: [push]
 
