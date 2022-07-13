@@ -50,7 +50,8 @@ ${duplication.codefragment}
       start_line: Number(duplication.file[0].line),
       end_line: Number(duplication.file[0].line) + Number(duplication.lines),
       title: `Duplicate code detected`,
-      message: decode(message)
+      message: decode(message),
+      raw_details: message
     }
 
     return annotation
