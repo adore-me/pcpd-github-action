@@ -54,16 +54,14 @@ function annotationsForPath(resultFile) {
         let filesWithLines = '';
         // eslint-disable-next-line github/array-foreach
         duplication.file.forEach(file => {
-            filesWithLines += `- in file: \`${file.path}\` at line \`${file.line}\`\n`;
+            filesWithLines += `- in file: ${file.path} at line ${file.line}\n`;
         });
         const message = `
 Lines duplicated: ${duplication.lines} in ${duplication.file.length} places\n
 Duplications:
 ${filesWithLines}
 Code:
-\`\`\`typescript
 ${duplication.codefragment}
-\`\`\`
 `;
         const annotation = {
             annotation_level: github_1.AnnotationLevel.warning,
@@ -71,8 +69,7 @@ ${duplication.codefragment}
             start_line: Number(duplication.file[0].line),
             end_line: Number(duplication.file[0].line) + Number(duplication.lines),
             title: `Duplicate code detected`,
-            message: (0, unescape_1.default)(message),
-            raw_details: message
+            message: (0, unescape_1.default)(message)
         };
         return annotation;
     }, asArray((_a = result['pmd-cpd']) === null || _a === void 0 ? void 0 : _a.duplication));

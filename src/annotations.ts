@@ -31,7 +31,7 @@ export function annotationsForPath(resultFile: string): Annotation[] {
     let filesWithLines = ''
     // eslint-disable-next-line github/array-foreach
     duplication.file.forEach(file => {
-      filesWithLines += `- in file: \`${file.path}\` at line \`${file.line}\`\n`
+      filesWithLines += `- in file: ${file.path} at line ${file.line}\n`
     })
 
     const message = `
@@ -39,9 +39,7 @@ Lines duplicated: ${duplication.lines} in ${duplication.file.length} places\n
 Duplications:
 ${filesWithLines}
 Code:
-\`\`\`typescript
 ${duplication.codefragment}
-\`\`\`
 `
 
     const annotation: Annotation = {
@@ -50,8 +48,7 @@ ${duplication.codefragment}
       start_line: Number(duplication.file[0].line),
       end_line: Number(duplication.file[0].line) + Number(duplication.lines),
       title: `Duplicate code detected`,
-      message: decode(message),
-      raw_details: message
+      message: decode(message)
     }
 
     return annotation
