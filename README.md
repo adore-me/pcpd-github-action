@@ -1,6 +1,6 @@
-![build-test](https://github.com/jwgmeligmeyling/pmd-github-action/workflows/build-test/badge.svg)
+![build-test](https://github.com/mihaisee/pcpd-github-action/workflows/build-test/badge.svg)
 
-# PMD GitHub Action
+# CPD GitHub Action
 
 This action pushes results from [PMD](https://pmd.github.io/) as check run annotations. :rocket:
 
@@ -36,40 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
+    # ...run copy paste detector
+    - uses: mihaisee/pcpd-github-action@master
       with:
-        java-version: 1.8
-    - uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    - name: Build with Maven
-      run: mvn -B verify pmd:pmd
-    - uses: jwgmeligmeyling/pmd-github-action@master
-      with:
-        path: '**/pmd.xml'
-```
-
-And do not forget to enable XML output for the Maven plugin:
-
-```xml
-<build>
-  <plugins>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-pmd-plugin</artifactId>
-      <version>3.13.0</version>
-      <configuration>
-        <includeTests>true</includeTests>
-        <failOnViolation>false</failOnViolation>
-        <skipEmptyReport>false</skipEmptyReport>
-      </configuration>
-    </plugin>
-  </plugins>
-</build>
+        path: '**/cpd.xml'
 ```
 
 Please note that by default workflows on `pull_request` events checkout [`refs/pull/:prNumber/merge`](https://help.github.com/en/actions/reference/events-that-trigger-workflows) instead of the head of the pull request.

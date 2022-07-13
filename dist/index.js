@@ -45,35 +45,34 @@ const XML_PARSE_OPTIONS = {
 function asArray(arg) {
     return !arg ? [] : Array.isArray(arg) ? arg : [arg];
 }
-function getWarningLevel(arg) {
-    switch (arg) {
-        case '1':
-            return github_1.AnnotationLevel.failure;
-        case '2':
-        case '3':
-            return github_1.AnnotationLevel.warning;
-        default:
-            return github_1.AnnotationLevel.notice;
-    }
-}
 function annotationsForPath(resultFile) {
     var _a;
     core.info(`Creating annotations for ${resultFile}`);
     const root = process.env['GITHUB_WORKSPACE'] || '';
     const result = fast_xml_parser_1.default.parse(fs_1.default.readFileSync(resultFile, 'UTF-8'), XML_PARSE_OPTIONS);
-    return (0, ramda_1.chain)(file => {
-        return (0, ramda_1.map)(violation => {
-            const annotation = {
-                annotation_level: getWarningLevel(violation.priority),
-                path: path.relative(root, file.name),
-                start_line: Number(violation.beginline || 1),
-                end_line: Number(violation.endline || violation.beginline || 1),
-                title: `${violation.ruleset} ${violation.rule}`,
-                message: (0, unescape_1.default)(violation['#text'])
-            };
-            return annotation;
-        }, asArray(file.violation));
-    }, asArray((_a = result.pmd) === null || _a === void 0 ? void 0 : _a.file));
+    return (0, ramda_1.map)(duplication => {
+        let filesWithLines = '';
+        // eslint-disable-next-line github/array-foreach
+        duplication.file.forEach(file => {
+            filesWithLines += `- in file: ${file.path} at line ${file.line}\n`;
+        });
+        const message = `
+Lines duplicated: ${duplication.lines} in ${duplication.file.length} places\n
+Duplications:
+${filesWithLines}
+Code:
+${duplication.codefragment}
+`;
+        const annotation = {
+            annotation_level: github_1.AnnotationLevel.warning,
+            path: path.relative(root, duplication.file[0].path),
+            start_line: Number(duplication.file[0].line),
+            end_line: Number(duplication.file[0].line) + Number(duplication.lines),
+            title: `Duplicate code detected`,
+            message: (0, unescape_1.default)(message)
+        };
+        return annotation;
+    }, asArray((_a = result['pmd-cpd']) === null || _a === void 0 ? void 0 : _a.duplication));
 }
 exports.annotationsForPath = annotationsForPath;
 
