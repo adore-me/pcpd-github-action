@@ -1,4 +1,4 @@
-![build-test](https://github.com/mihaisee/pcpd-github-action/workflows/build-test/badge.svg)
+![build-test](https://github.com/adore-me/pcpd-github-action/workflows/build-test/badge.svg)
 
 # PCPD GitHub Action
 
